@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Create User{% endblock %}
+
+{% block content %}
+    <h2>Create a New User</h2>
+    <form method="post" action="{% url 'create_user' %}">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required><br>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required><br>
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" id="first_name"><br>
+        <label for="last_name">Last Name:</label>
+        <input type="text" name="last_name" id="last_name"><br>
+        <label for="is_active">Active:</label>
+        <input type="checkbox" name="is_active" id="is_active"><br>
+        <input type="submit" value="Create User">
+    </form>
+    <p><a href="/">Return to Home</a></p>
+{% endblock %}

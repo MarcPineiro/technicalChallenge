@@ -1,0 +1,11 @@
+python3 -m venv venv
+source venv/bin/activate
+sudo rm -rf venv
+
+
+python manage.py makemigrations
+python manage.py migrate
+
+
+curl -X POST http://127.0.0.1:8000/api/users -H 'Content-Type: application/json' -d '{"first_name": "John", "last_name": "Doe", "password": "securepassword", "email": "use3@example.com"}'
+curl http://127.0.0.1:8000/api/users/1
