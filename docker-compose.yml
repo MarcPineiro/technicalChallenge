@@ -9,15 +9,8 @@ services:
       - "3306:3306"
     expose:
       - '3306'
-    environment:
-      - MYSQL_DATABASE=dbname
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=ANSKk08aPEDbFjDO
-      - MYSQL_HOST=db
-      - MYSQL_PORT=3306  
-      - MYSQL_ROOT_HOST=%
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    env_file:
+      - ./.env
     volumes:
       - ./my-db:/var/lib/mysql
     networks:
