@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+        
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+  dockerize:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Build Docker image
+      run: docker build -t my-django-app:latest .
+      
+  deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Minikube
+      run: |
+        curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+        sudo install minikube-linux-amd64 /usr/local/bin/minikube
+        rm minikube-linux-amd64
+
+    - name: Start Minikube
+      run: minikube start --driver=docker
+      
+    - name: Load Docker image into Minikube
+      run: eval $(minikube docker-env) && docker load -i my-django-app_latest.tar
+      
+    - name: Apply Kubernetes manifests
+      run: kubectl apply -f deployment.yaml -f service.yaml
+      
+    - name: Verify Deployment
+      run: kubectl get deployments && kubectl get services
