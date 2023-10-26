@@ -1,4 +1,4 @@
 Django==4.2.6
 djangorestframework==3.14.0
 PyMySQL==0.8.0
-mysqlclient
+mysqlclient==2.2.0
