@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.service: web
+  name: web
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      nodePort: 30008
+      targetPort: 80
+  selector:
+    io.service: web
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: web
+subsets:
+  - addresses:
+      - ip: 10.52.7.28
+      - ip: 10.52.7.29
+    ports:
+      - name: http
+        port: 80
