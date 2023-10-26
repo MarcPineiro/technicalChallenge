@@ -1,4 +1,5 @@
 venv/
 venv/**
+*.ign
 *.ignore
 my-db/
