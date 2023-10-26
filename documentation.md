@@ -7,13 +7,18 @@
 3. [API Endpoints](#api-endpoints)
    - [Create a New User](#create-a-new-user)
    - [Retrieve User Information](#retrieve-user-information)
-4. [Request/Response Format](#requestresponse-format)
+4. [Kubernetes Setup](#kubernetes-setup)
+   - [Setting Up Minikube](#setting-up-minikube)
+   - [Deploying the API Server](#deploying-the-api-server)
+   - [Accessing the API Server](#accessing-the-api-server)
+   - [Delete resources](#delete-resources)
+5. [Request/Response Format](#requestresponse-format)
    - [Create a New User](#create-a-new-user-request)
    - [Create a New User Response](#create-a-new-user-response)
    - [Retrieve User Information](#retrieve-user-information-request)
    - [Retrieve User Information Response](#retrieve-user-information-response)
    - [Error Response](#error-response)
-5. [Error Codes](#error-codes)
+6. [Error Codes](#error-codes)
 
 ## Local Setup
 
@@ -88,6 +93,124 @@ Dockerizing your application allows you to create a portable and consistent envi
    ```
 
    For more information on the command read the [documentation](https://docs.docker.com/engine/reference/commandline/exec/)
+   
+
+## Kubernetes Setup
+
+### Setting Up Minikube
+
+1. **Install Minikube**: If you haven't already, install Minikube by following the official documentation: [Minikube Installation Guide](https://minikube.sigs.k8s.io/docs/start/).
+
+2. **Start Minikube**: Start Minikube with the following command:
+
+   ```bash
+   minikube start
+   ```
+
+### Deploying the API Server
+
+From now on we will use only kubectl for the commands of kubernetes, but working with minikube you can either substitute that for ```minikube kubectl -- ``` or create an alias of that by using ``` alias kubectl="minikube kubectl --" ```
+
+1. **Apply Deployment and Service Manifests**:
+
+   First create the image of the container for the aplication:
+   
+   ```bash
+   eval $(minikube docker-env) #this is needed for minikube to actually see the image created
+   docker build . -t imageName
+   ```
+
+   Once the image is build we will apply the files on the k8s folder so the API server gets deployed:
+
+   ```bash
+   cd ./k8s
+   kubectl apply -f env-configmap.yaml
+   kubectl apply -f db-claim0-persistentvolumeclaim.yaml
+   kubectl apply -f djangonetwork-networkpolicy.yaml
+   kubectl apply -f db-deployment.yaml
+   kubectl apply -f db-service.yaml
+   kubectl apply -f web-deployment.yaml
+   kubectl apply -f web-service.yaml
+   ```
+
+   With this the enviroment for the API service will be deployed. (If the docuemts are updated the apply command will update the elements)
+
+2. **Check Deployment Status**:
+
+   Verify the deployment status using the following commands:
+
+   ```bash
+   kubectl get deployments
+   kubectl get pods
+   kubectl get services
+   ```
+
+   Ensure that the Deployment is running, Pods are in a ready state, and the Service is available.
+
+### Accessing the API Server
+
+To access your API server through the NodePort, follow these steps:
+
+1. **Get the Server url**:
+
+   Retrieve the Server url address using the following command:
+
+   ```bash
+   minikube service web --url
+   ```
+
+2. **Access the API Server**:
+
+   With the resutl of the previous command we can start interacting with the server using the endpoints accessibles:
+
+   ```bash
+   curl http://MINIKUBE_IP:NODE_PORT/api/users/1
+   curl -X POST http://MINIKUBE_IP:NODE_PORT/api/users -H 'Content-Type: application/json' -d '{"first_name": "John", "last_name": "Doe", "password": "securepassword", "email": "use3@example.com"}' 
+   ```
+   
+### Delete resources
+
+   To delete resources in minikube use the command:
+
+   ```bash
+   kubectl delete <resource-type> <name>
+   ```
+
+   If you don't know the name of the resource you can find it by using the command:
+
+   ```bash
+   kubectl get <resource-type> <name>
+   ```
+
+   Example:
+   ```bash
+   $> kubectl get service
+      NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+      db           NodePort    10.98.155.120    <none>        3306:32292/TCP   72m
+      kubernetes   ClusterIP   10.96.0.1        <none>        443/TCP          4h23m
+      web          NodePort    10.106.191.136   <none>        8080:30008/TCP   72m
+   $> kubectl delete service web
+   ```
+
+1. **Get the Server url**:
+
+## Kubernetes for Deployment
+
+Kubernetes is a container orchestration platform that provides numerous benefits for deploying and managing applications like yours:
+
+- **Scalability**: Kubernetes allows you to easily scale your application by running multiple replicas, ensuring high availability and load balancing.
+
+- **Resource Isolation**: Containers run in isolated environments, providing security and resource control.
+
+- **Portability**: Applications are packaged as containers, making them highly portable and consistent across different environments.
+
+- **Auto Healing**: Kubernetes automatically replaces failed containers or Pods, ensuring the application's reliability.
+
+- **Rollouts and Rollbacks**: Kubernetes supports controlled updates and rollbacks, minimizing deployment risks.
+
+- **Service Discovery and Load Balancing**: Kubernetes provides built-in service discovery and load balancing for your application's services.
+
+By using Kubernetes, you enhance the scalability, availability, and manageability of your application, making it suitable for deployment in production environments.
 
 ## API Endpoints
 
