@@ -3,16 +3,17 @@
 ## Table of Contents
 
 1. [Local Setup](#local-setup)
-2. [API Endpoints](#api-endpoints)
+2. [Docker Setup](#docker-setup)
+3. [API Endpoints](#api-endpoints)
    - [Create a New User](#create-a-new-user)
    - [Retrieve User Information](#retrieve-user-information)
-3. [Request/Response Format](#requestresponse-format)
+4. [Request/Response Format](#requestresponse-format)
    - [Create a New User](#create-a-new-user-request)
    - [Create a New User Response](#create-a-new-user-response)
    - [Retrieve User Information](#retrieve-user-information-request)
    - [Retrieve User Information Response](#retrieve-user-information-response)
    - [Error Response](#error-response)
-4. [Error Codes](#error-codes)
+5. [Error Codes](#error-codes)
 
 ## Local Setup
 
@@ -52,6 +53,41 @@ To run the API server locally, follow these steps:
    ```
 
 The API server will be accessible locally at [http://localhost:8000](http://localhost:8000).
+
+## Docker Setup
+
+Dockerizing your application allows you to create a portable and consistent environment for your Django app. This simplifies deployment and management, making it easier to scale, share, and maintain your application. Follow these steps to build and run the Docker container for your API server:
+
+1. **Install Docker**: If you haven't already, install Docker on your machine by following the instructions for your specific platform: [Docker Installation Guide](https://docs.docker.com/get-docker/).
+
+2. **Install Docker Compose**: If you haven't already, install Docker Compose on your machine by following the instructions for your specific platform: [Docker Compose Standalone Installation Guide](https://docs.docker.com/compose/install/standalone/).
+
+3. **Run the Docker Container**:
+
+   Start the Docker containers to start the Django application and the database to save all data:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+   The `-d` flag indicates to start the services detached so you can use the terminal and have it runs on background.
+   Its configurate to create a volume with the mySQL folder so the data is not lost between executions.
+
+4. **Access the API**: Your Django application in the Docker container should be accessible at [http://localhost:8080](http://localhost:8080) on your host machine.
+
+5. **Enter the containers**:
+
+   If it's needed to execute anythin in the containers execute the command:
+   ```bash
+   docker container ls -a
+   ```
+
+   Copyt the id of the container you want to enter and use the command:
+   ```bash
+   docker exec -it <container_id> [sh/bash]
+   ```
+
+   For more information on the command read the [documentation](https://docs.docker.com/engine/reference/commandline/exec/)
 
 ## API Endpoints
 

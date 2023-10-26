@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db
+    image: mysql:8.0
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    expose:
+      - '3306'
+    environment:
+      - MYSQL_DATABASE=dbname
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=ANSKk08aPEDbFjDO
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306  
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./my-db:/var/lib/mysql
+    networks:
+      - djangonetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-ppass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    container_name: django-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    ports:
+      - 8080:80
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db:db
+    networks:
+      - djangonetwork
+  
+networks:
+    djangonetwork:
+        driver: bridge
+
+volumes:
+  my-db:

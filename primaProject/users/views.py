@@ -21,7 +21,8 @@ def get_user(request, user_id):
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
     except CustomUser.DoesNotExist as e:
-        return Response("Unhandled error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #return Response("Unhandled error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def create_user(request):
@@ -40,4 +41,5 @@ def create_user(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response("Unhandled error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        #return Response("Unhandled error", status=status.HTTP_500_INTERNAL_SERVER_ERROR)

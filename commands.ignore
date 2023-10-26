@@ -5,7 +5,16 @@ sudo rm -rf venv
 
 python manage.py makemigrations
 python manage.py migrate
+python manage.py runserver
 
 
 curl -X POST http://127.0.0.1:8000/api/users -H 'Content-Type: application/json' -d '{"first_name": "John", "last_name": "Doe", "password": "securepassword", "email": "use3@example.com"}'
-curl http://127.0.0.1:8000/api/users/1
+curl http://127.0.0.1:80/api/users/1
+
+
+docker build . -t djangoapp
+docker run --detach -p 8080:80 -v ./db:/django/db djangoapp
+docker exec -it dcad21f380da sh
+
+curl http://localhost:8080/api/users/1
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"first_name": "John", "last_name": "Doe", "password": "securepassword", "email": "use3@example.com"}'
