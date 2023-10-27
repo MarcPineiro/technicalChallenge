@@ -30,7 +30,7 @@ jobs:
           python-version: 3.x
       - name: Add hosts to /etc/hosts
         run: |
-            echo "127.0.0.1       db" | tee -a /etc/hosts
+            sudo echo "127.0.0.1       db" | tee -a /etc/hosts
       - name: test
         run: |
           sudo systemctl start mysql
