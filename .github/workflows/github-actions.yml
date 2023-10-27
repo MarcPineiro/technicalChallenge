@@ -29,14 +29,6 @@ jobs:
       - name: Add hosts to /etc/hosts
         run: |
             echo "127.0.0.1       db" | tee -a /etc/hosts
-      - name: Update mysql client
-        run: |
-            apt-get update
-            apt-get install -y  mysql-client 
-      - name: Update mysql client
-        run: |
-            apt-get update
-            apt-get install -y  mysql-client 
       - name: Configure mysql database
         run: cat setup_mysql.sql | mysql -u root --password=ANSKk08aPEDbFjDO
       - name: Install dependencies
