@@ -21,7 +21,7 @@ jobs:
           MYSQL_DATABASE_HOST: db
           MYSQL_DATABASE_PORT: 3306
         ports:
-          - 33306:3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout code
@@ -34,9 +34,9 @@ jobs:
         run: |
             echo "127.0.0.1       db" | tee -a /etc/hosts
       - name: apt update
-        run: apt-get update
+        run: sudo apt-get update & sudo apt-get upgrade 
       - name: Install mysql server
-        run: apt install -y mysql-server 
+        run: sudo apt-get install -y mysql-server 
       - name: Configure mysql database
         run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO database < db_structure.sql
       - name: Install dependencies
