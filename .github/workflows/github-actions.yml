@@ -36,7 +36,7 @@ jobs:
       - name: apt update
         run: apt-get update
       - name: Install mysql server
-        run: apt install mysql-server
+        run: apt install -y mysql-server 
       - name: Configure mysql database
         run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO database < db_structure.sql
       - name: Install dependencies
