@@ -13,9 +13,9 @@ jobs:
         # https://hub.docker.com/_/mysql
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: dbname
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: mysqldb
+          MYSQL_USER: mysql-user
+          MYSQL_PASSWORD: mysql-password
           MYSQL_ROOT_PASSWORD: ANSKk08aPEDbFjDO
           MYSQL_DATABASE_HOST: db
           MYSQL_DATABASE_PORT: 3306
@@ -36,7 +36,7 @@ jobs:
       - name: Install mysql server
         run: sudo apt-get install -y mysql-server 
       - name: Configure mysql database
-        run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO dbname < setup_mysql.sql
+        run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO mysqldb < setup_mysql.sql
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Migrate database
