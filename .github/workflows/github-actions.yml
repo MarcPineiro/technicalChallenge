@@ -34,9 +34,9 @@ jobs:
         run: |
             echo "127.0.0.1       db" | tee -a /etc/hosts
       - name: Install mysql server
-        run: sudo apt install mysql-server
+        run: apt install mysql-server
       - name: Configure mysql database
-        run: sudo mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO database < db_structure.sql
+        run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO database < db_structure.sql
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Migrate database
