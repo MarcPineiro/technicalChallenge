@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'primaProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE', 'mysql-db'),
+        'NAME': os.environ.get('MYSQL_DATABASE', 'mysqldb'),
         'USER': os.environ.get('MYSQL_USER', 'mysql-user'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'mysql-password'),
         'HOST': os.environ.get('MYSQL_DATABASE_HOST', 'db'),
