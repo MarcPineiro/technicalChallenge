@@ -32,7 +32,7 @@ jobs:
         run: |
             sudo echo "127.0.0.1       db" | sudo tee -a /etc/hosts
       - name: apt update
-        run: sudo apt-get update & sudo apt-get upgrade 
+        run: sudo apt-get update
       - name: Install mysql server
         run: sudo apt-get install -y mysql-server 
       - name: Configure mysql database
