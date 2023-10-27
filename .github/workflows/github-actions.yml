@@ -7,8 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    container: ubuntu:latest
+    runs-on: ubuntu-20.04
     services:
       mysql:
         # https://hub.docker.com/_/mysql
@@ -32,6 +31,11 @@ jobs:
       - name: Add hosts to /etc/hosts
         run: |
             echo "127.0.0.1       db" | tee -a /etc/hosts
+      - name: test
+        run: |
+          sudo systemctl start mysql
+          mysql -e 'CREATE DATABASE testdb;' -uroot -proot
+          mysql -e 'SHOW DATABASES;' -uroot -proot
       - name: apt update
         run: sudo apt-get update & sudo apt-get upgrade 
       - name: Install mysql server
