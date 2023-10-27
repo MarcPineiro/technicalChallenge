@@ -40,19 +40,53 @@ To run the API server locally, follow these steps:
    source venv/bin/activate  # On Windows, use 'venv\Scripts\activate'
    ```
 
-4. Install the required packages:
+4. Instal mysql:
+   ```
+   sudo apt install mysql-server
+   ```
+
+   Make sure the mysql.service is active:
+
+   ```
+   sudo systemctl mysql.service status
+   ```
+
+5. Configure database:
+
+   ```
+   DROP DATABASE IF EXISTS `mysqldb`;
+   CREATE DATABASE `mysqldb`
+      DEFAULT CHARACTER SET utf8
+      DEFAULT COLLATE utf8_general_ci;
+
+   USE mysql;
+   GRANT ALL PRIVILEGES ON *.* TO 'mysql-user'@'localhost' WITH GRANT OPTION;
+   FLUSH PRIVILEGES;
+   ```
+
+6. Install the required packages:
    ```
    pip install -r requirements.txt
    ```
 
-5. Run migrations to set up the database:
+7. Add host config:
+
+   Modify the host file of the system and add the line:
+   ```
+   <database-ip or 127.0.0.1>       db
+   ```
+
+   With this the code will be able to connect to the database without the need to change the configuration.
+   If not change the ``` 'HOST': os.environ.get('MYSQL_DATABASE_HOST', 'db') ``` from the settings.py file to point to localhost or the url of where the database is.
+
+8. Run migrations to set up the database:
    ```
    cd primaProject/
    python manage.py makemigrations
    python manage.py migrate
    ```
 
-6. Start the development server:
+9. Start the development server:
    ```
    python manage.py runserver
    ```
