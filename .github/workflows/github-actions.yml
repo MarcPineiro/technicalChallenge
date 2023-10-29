@@ -12,8 +12,8 @@ jobs:
       MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
       MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}
       MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_USER: ${{ vars.TEST_MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ vars.TEST_MYSQL_PASSWORD }}
       MYSQL_ROOT_PASSWORD: ${{ vars.TEST_MYSQL_ROOT_PASSWORD }}
     services:
       mysql:
