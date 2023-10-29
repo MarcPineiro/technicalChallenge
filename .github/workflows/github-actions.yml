@@ -44,26 +44,14 @@ jobs:
           python3 primaProject/manage.py makemigrations
           python3 primaProject/manage.py migrate
       - name: Test code
-        run: python3 primaProject/manage.py test users
-
-  minikube:
-    runs-on: ubuntu-20.04
-    needs: build
-    name: Install minikube
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup
-        uses: medyagh/setup-minikube@latest
+        run: python3 primaProject/manage.py test users      
         
   dockerize:
     runs-on: ubuntu-20.04
-    needs: minikube
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Change to minikube docker enviroment
-        run: eval $(minikube -p minikube docker-env)
       - name: Build image
         run: docker build . -t imageName
       - name: Show image build
