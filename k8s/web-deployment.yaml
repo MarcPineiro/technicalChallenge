@@ -19,42 +19,11 @@ spec:
       - name: web
         image: imagename
         imagePullPolicy: Never
-        env:
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_DATABASE
-          - name: MYSQL_DATABASE_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_DATABASE_HOST
-          - name: MYSQL_DATABASE_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_DATABASE_PORT
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_PASSWORD
-          - name: MYSQL_ROOT_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_ROOT_HOST
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_USER
-            valueFrom:
-              configMapKeyRef:
-                name: env
-                key: MYSQL_USER
+        envFrom:
+        - secretRef:
+            name: env-secret
+        - configMapRef:
+            name: env-config
         ports:
           - containerPort: 80
         resources: {}
