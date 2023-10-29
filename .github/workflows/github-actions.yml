@@ -64,6 +64,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - uses: medyagh/setup-minikube@latest
+        with:
+          cache: false
       - name: Start Minikube
         run: minikube start
       - name: Load Docker image into Minikube
