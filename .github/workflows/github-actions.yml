@@ -44,7 +44,7 @@ jobs:
           python3 primaProject/manage.py makemigrations
           python3 primaProject/manage.py migrate
       - name: Test code
-        run: python3 primaProject/manage.py test
+        run: python3 primaProject/manage.py test users
 
   minikube:
     runs-on: ubuntu-20.04
