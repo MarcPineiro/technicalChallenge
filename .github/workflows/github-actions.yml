@@ -8,17 +8,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    env:
+      MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+      MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}
+      MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_ROOT_HOST: ${{ secrets.MYSQL_ROOT_HOST }}
     services:
       mysql:
         # https://hub.docker.com/_/mysql
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: mysqldb
-          MYSQL_USER: mysql-user
-          MYSQL_PASSWORD: mysql-password
-          MYSQL_ROOT_PASSWORD: ANSKk08aPEDbFjDO
-          MYSQL_DATABASE_HOST: db
-          MYSQL_DATABASE_PORT: 3306
+          MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+          MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}
+          MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_ROOT_HOST: ${{ secrets.MYSQL_ROOT_HOST }}
         ports: ['3306:3306']
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
@@ -34,8 +43,12 @@ jobs:
         run: sudo apt-get update
       - name: Install mysql server
         run: sudo apt-get install -y mysql-server 
+      - name: Update setup mysql sql file
+        run: |
+          sed -i 's/mysqldb/${{ vars.MYSQL_DATABASE }}/g' setup_mysql.sql > setup_mysql.sql
+          sed -i 's/mysql-user/${{ secrets.MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
       - name: Configure mysql database
-        run: mysql -h 127.0.0.1 -uroot -pANSKk08aPEDbFjDO mysqldb < setup_mysql.sql
+        run: mysql -h 127.0.0.1 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Migrate database
@@ -71,9 +84,19 @@ jobs:
         run: minikube start
       - name: Load Docker image into Minikube
         run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
+      - name: Set env values
+        run: |
+          sed -i 's/dbname/${{ vars.MYSQL_DATABASE }}/g' env-configmap.yaml > env-configmap.yaml
+          sed -i 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/g' env-configmap.yaml > env-configmap.yaml
+          sed -i 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/g' env-configmap.yaml > env-configmap.yaml
+          sed -i 's/password/${{ secrets.MYSQL_PASSWORD }}/g' env-secrets.yaml > env-secrets.yaml
+          sed -i 's/host/${{ secrets.MYSQL_ROOT_HOST }}/g' env-secrets.yaml > env-secrets.yaml
+          sed -i 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/g' env-secrets.yaml > env-secrets.yaml
+          sed -i 's/user/${{ secrets.MYSQL_USER }}/g' env-secrets.yaml > env-secrets.yaml
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/env-configmap.yaml
+          kubectl apply -f k8s/env-secret.yaml
           kubectl apply -f k8s/db-claim0-persistentvolumeclaim.yaml
           kubectl apply -f k8s/djangonetwork-networkpolicy.yaml
           kubectl apply -f k8s/db-deployment.yaml
