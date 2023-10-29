@@ -38,7 +38,7 @@ jobs:
           python-version: '3.10' 
       - name: Add hosts to /etc/hosts
         run: |
-            sudo echo "127.0.0.1       db" | sudo tee -a /etc/hosts
+            sudo echo "127.0.0.1       ${{ vars.MYSQL_DATABASE_HOST }}" | sudo tee -a /etc/hosts
       - name: apt update
         run: sudo apt-get update
       - name: Install mysql server
@@ -48,7 +48,7 @@ jobs:
           sed -i 's/mysqldb/${{ vars.MYSQL_DATABASE }}/g' setup_mysql.sql > setup_mysql.sql
           sed -i 's/mysql-user/${{ secrets.MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
       - name: Configure mysql database
-        run: mysql -h 127.0.0.1 -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
+        run: mysql -h 127.0.0.1 -uroot -p$MYSQL_ROOT_PASSWORD mysqldb < setup_mysql.sql
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Migrate database
