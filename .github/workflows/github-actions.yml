@@ -20,6 +20,8 @@ jobs:
         # https://hub.docker.com/_/mysql
         image: mysql:8.0
         env:
+          MYSQL_USER: ${{ vars.TEST_MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ vars.TEST_MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
           MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
           MYSQL_ROOT_PASSWORD: ${{ vars.TEST_MYSQL_ROOT_PASSWORD }}
@@ -41,7 +43,7 @@ jobs:
       - name: Update setup mysql sql file
         run: |
           sed -i 's/mysqldb/${{ vars.MYSQL_DATABASE }}/g' setup_mysql.sql > setup_mysql.sql
-          sed -i 's/mysql-user/${{ secrets.MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
+          sed -i 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
       - name: Configure mysql database
         run: mysql -h 127.0.0.1 -uroot -p${{ vars.TEST_MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
       - name: Install dependencies
