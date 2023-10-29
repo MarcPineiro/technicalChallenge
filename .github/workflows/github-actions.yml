@@ -14,7 +14,7 @@ jobs:
       MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ vars.TEST_MYSQL_ROOT_PASSWORD }}
       MYSQL_ROOT_HOST: ${{ secrets.MYSQL_ROOT_HOST }}
     services:
       mysql:
@@ -26,7 +26,7 @@ jobs:
           MYSQL_DATABASE_PORT: ${{ vars.MYSQL_DATABASE_PORT }}
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ vars.TEST_MYSQL_ROOT_PASSWORD }}
           MYSQL_ROOT_HOST: ${{ secrets.MYSQL_ROOT_HOST }}
         ports: ['3306:3306']
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -48,7 +48,7 @@ jobs:
           sed -i 's/mysqldb/${{ vars.MYSQL_DATABASE }}/g' setup_mysql.sql > setup_mysql.sql
           sed -i 's/mysql-user/${{ secrets.MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
       - name: Configure mysql database
-        run: mysql -h ${{ vars.MYSQL_DATABASE_HOST }} -uroot -p$MYSQL_ROOT_PASSWORD mysqldb < setup_mysql.sql
+        run: mysql -h ${{ vars.MYSQL_DATABASE_HOST }} -uroot -p${{ vars.TEST_MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Migrate database
