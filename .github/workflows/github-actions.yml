@@ -62,14 +62,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Change to minikube docker enviroment
+        run: eval $(minikube -p minikube docker-env)
       - name: Build image
+        run: docker build . -t imageName
+      - name: Show image build
         run: |
-          export SHELL=/bin/bash
-          eval $(minikube -p minikube docker-env)
-          docker build . -t imageName
           echo -n "verifying images:"
           docker images
-
     
   deployment:
     runs-on: ubuntu-20.04
