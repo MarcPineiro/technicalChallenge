@@ -93,7 +93,7 @@ jobs:
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/env-configmap-sed2.yaml
-          kubectl apply -f k8s/env-secret-sed3.yaml
+          kubectl apply -f k8s/env-secrets-sed3.yaml
           kubectl apply -f k8s/db-claim0-persistentvolumeclaim.yaml
           kubectl apply -f k8s/djangonetwork-networkpolicy.yaml
           kubectl apply -f k8s/db-deployment.yaml
