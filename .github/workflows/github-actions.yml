@@ -86,7 +86,7 @@ jobs:
           sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
-          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' k8s/env-secrets.yaml > k8s/env-secrets-sed2.yaml
+          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' k8s/env-secrets.yaml > k8s/env-secrets-sed.yaml
           sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' k8s/env-secrets-sed.yaml > k8s/env-secrets-sed1.yaml
           sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' k8s/env-secrets-sed1.yaml > k8s/env-secrets-sed2.yaml
           sed 's/user/${{ secrets.MYSQL_USER }}/' k8s/env-secrets-sed2.yaml > k8s/env-secrets-sed3.yaml
