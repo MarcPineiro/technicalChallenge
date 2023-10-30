@@ -103,6 +103,8 @@ jobs:
           kubectl apply --force -f k8s/db-service.yaml
       - name: Wait for db to be ready
         run: kubectl rollout status deployment/db -n default --timeout=300s
+      - name: logs pods db
+        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("db")).metadata.name')
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply --force -f k8s/web-deployment-sed.yaml

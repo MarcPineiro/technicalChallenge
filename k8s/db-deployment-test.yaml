@@ -54,14 +54,14 @@ spec:
                 configMapKeyRef:
                   name: env-config
                   key: MYSQL_DATABASE_HOST
+          name: db
           livenessProbe:
             exec:
               command:
                 - bash
                 - "-c"
-                - |
-                mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
-          name: db
+                - | 
+                  mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
           ports:
             - containerPort: 3306
           resources: {}
