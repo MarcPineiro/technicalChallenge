@@ -42,8 +42,8 @@ jobs:
         run: sudo apt-get install -y mysql-server 
       - name: Update setup mysql sql file
         run: |
-          sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql.sql > setup_mysql.sql
-          sed 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/' setup_mysql.sql > setup_mysql.sql
+          sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql.sql > setup_mysql2.sql
+          sed 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/' setup_mysql2.sql > setup_mysql.sql
       - name: Get version
         id: vars
         run: echo "version=$(cat setup_mysql.sql)" >> $GITHUB_OUTPUT
@@ -88,23 +88,23 @@ jobs:
         run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
       - name: Set env values
         run: |
-          sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' env-configmap.yaml > env-configmap.yaml
-          sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' env-configmap.yaml > env-configmap.yaml
-          sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' env-configmap.yaml > env-configmap.yaml
-          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' env-secrets.yaml > env-secrets.yaml
-          sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' env-secrets.yaml > env-secrets.yaml
-          sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' env-secrets.yaml > env-secrets.yaml
-          sed 's/user/${{ secrets.MYSQL_USER }}/' env-secrets.yaml > env-secrets.yaml
+          sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' env-configmap.yaml > env-configmap-sed.yaml
+          sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' env-configmap.yaml > env-configmap-sed.yaml
+          sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' env-configmap.yaml > env-configmap-sed.yaml
+          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' env-secrets.yaml > env-secrets-sed.yaml
+          sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' env-secrets.yaml > env-secrets-sed.yaml
+          sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' env-secrets.yaml > env-secrets-sed.yaml
+          sed 's/user/${{ secrets.MYSQL_USER }}/' env-secrets.yaml > env-secrets-sed.yaml
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/env-configmap.yaml
-          kubectl apply -f k8s/env-secret.yaml
-          kubectl apply -f k8s/db-claim0-persistentvolumeclaim.yaml
-          kubectl apply -f k8s/djangonetwork-networkpolicy.yaml
-          kubectl apply -f k8s/db-deployment.yaml
-          kubectl apply -f k8s/db-service.yaml
-          kubectl apply -f k8s/web-deployment.yaml
-          kubectl apply -f k8s/web-service.yaml
+          kubectl apply -f k8s/env-configmap-sed.yaml
+          kubectl apply -f k8s/env-secret-sed.yaml
+          kubectl apply -f k8s/db-claim0-persistentvolumeclaim-sed.yaml
+          kubectl apply -f k8s/djangonetwork-networkpolicy-sed.yaml
+          kubectl apply -f k8s/db-deployment-sed.yaml
+          kubectl apply -f k8s/db-service-sed.yaml
+          kubectl apply -f k8s/web-deployment-sed.yaml
+          kubectl apply -f k8s/web-service-sed.yaml
       - name: Wait for deployment to be ready
         run: |
           kubectl rollout status deployment/db -n default --timeout=300s
