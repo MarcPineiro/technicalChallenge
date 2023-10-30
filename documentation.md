@@ -55,7 +55,7 @@ To run the API server locally, follow these steps:
 
    ```
    DROP DATABASE IF EXISTS `mysqldb`;
-   CREATE DATABASE `mysqldb`
+   CREATE DATABASE `dbname`
       DEFAULT CHARACTER SET utf8
       DEFAULT COLLATE utf8_general_ci;
 
@@ -151,7 +151,7 @@ From now on we will use only kubectl for the commands of kubernetes, but working
    
    ```bash
    eval $(minikube docker-env) #this is needed for minikube to actually see the image created
-   docker build . -t imageName
+   docker build . -t imagename
    ```
 
    Once the image is build we will apply the files on the k8s folder so the API server gets deployed:
@@ -159,6 +159,7 @@ From now on we will use only kubectl for the commands of kubernetes, but working
    ```bash
    cd ./k8s
    kubectl apply -f env-configmap.yaml
+   kubectl apply -f env-secrets.yaml
    kubectl apply -f db-claim0-persistentvolumeclaim.yaml
    kubectl apply -f djangonetwork-networkpolicy.yaml
    kubectl apply -f db-deployment.yaml
