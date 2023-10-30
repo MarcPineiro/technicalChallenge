@@ -94,6 +94,7 @@ jobs:
           sed "s/MYSQL_DATABASE_HOST: \w*/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/MYSQL_DATABASE_PORT: \w*/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
+      - run: cat k8s/web-deployment-sed.yaml
       - name: test pods
         run: kubectl get endpoints
       - name: Apply Kubernetes manifests
