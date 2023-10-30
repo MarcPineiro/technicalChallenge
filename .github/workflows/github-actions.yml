@@ -117,7 +117,7 @@ jobs:
         run: kubectl get deployments && kubectl get services
       - name: Contact django app to test post endpoint is working
         run: |
-          minikube service example --url
+          minikube service web --url
           echo "------------------opening the service------------------"
           echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
       - if: ${{ steps.version.outputs.HTTP_CODE_POST == 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
