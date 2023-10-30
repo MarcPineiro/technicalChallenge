@@ -94,7 +94,6 @@ jobs:
           sed "s/MYSQL_DATABASE_HOST: \w*/MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: \"${{ vars.MYSQL_DATABASE_PORT }}\"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
-      - run: cat k8s/env-configmap-sed2.yaml
       - run: sudo ls /var/lib
       - run: sudo ls /var/lib/mysql
       - name: Apply Kubernetes manifests
@@ -113,6 +112,7 @@ jobs:
           kubectl rollout status deployment/web -n default --timeout=300s
       - name: Get api url
         run: minikube service web --url
+      - run: sleep 20
       - name: Verify Deployment
         run: kubectl get deployments && kubectl get services
       - name: Describe pods
@@ -132,6 +132,13 @@ jobs:
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
+      - run: |
+          minikube delete deployments --all
+          minikube delete services --all
+          minikube delete pvc --all
+          minikube delete networkpolicy --all
+          minikube delete configmaps --all
+          minikube delete secrets --all
       - run: minikube delete --all --purge
       - if: ${{ steps.version.outputs.HTTP_CODE_POST != 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
         name: Error code from post
