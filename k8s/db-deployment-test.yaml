@@ -56,12 +56,10 @@ spec:
                   key: MYSQL_DATABASE_HOST
           name: db
           livenessProbe:
-            exec:
-              command:
-                - bash
-                - "-c"
-                - | 
-                  mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 15
+            periodSeconds: 20
           ports:
             - containerPort: 3306
           resources: {}
