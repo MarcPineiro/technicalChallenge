@@ -16,15 +16,3 @@ spec:
   type: NodePort
 status:
   loadBalancer: {}
----
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: web
-subsets:
-  - addresses:
-      - ip: 10.52.7.28
-      - ip: 10.52.7.29
-    ports:
-      - name: http
-        port: 80
