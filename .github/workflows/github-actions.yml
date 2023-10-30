@@ -83,23 +83,23 @@ jobs:
         run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
       - name: Set env values
         run: |
-          sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' env-configmap.yaml > env-configmap-sed.yaml
-          sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' env-configmap.yaml > env-configmap-sed.yaml
-          sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' env-configmap.yaml > env-configmap-sed.yaml
-          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' env-secrets.yaml > env-secrets-sed.yaml
-          sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' env-secrets.yaml > env-secrets-sed.yaml
-          sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' env-secrets.yaml > env-secrets-sed.yaml
-          sed 's/user/${{ secrets.MYSQL_USER }}/' env-secrets.yaml > env-secrets-sed.yaml
+          sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
+          sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
+          sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
+          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' k8s/env-secrets.yaml > k8s/env-secrets-sed2.yaml
+          sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' k8s/env-secrets-sed.yaml > k8s/env-secrets-sed1.yaml
+          sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' k8s/env-secrets-sed1.yaml > k8s/env-secrets-sed2.yaml
+          sed 's/user/${{ secrets.MYSQL_USER }}/' k8s/env-secrets-sed2.yaml > k8s/env-secrets-sed3.yaml
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/env-configmap-sed.yaml
-          kubectl apply -f k8s/env-secret-sed.yaml
-          kubectl apply -f k8s/db-claim0-persistentvolumeclaim-sed.yaml
-          kubectl apply -f k8s/djangonetwork-networkpolicy-sed.yaml
-          kubectl apply -f k8s/db-deployment-sed.yaml
-          kubectl apply -f k8s/db-service-sed.yaml
-          kubectl apply -f k8s/web-deployment-sed.yaml
-          kubectl apply -f k8s/web-service-sed.yaml
+          kubectl apply -f k8s/env-configmap-sed2.yaml
+          kubectl apply -f k8s/env-secret-sed3.yaml
+          kubectl apply -f k8s/db-claim0-persistentvolumeclaim.yaml
+          kubectl apply -f k8s/djangonetwork-networkpolicy.yaml
+          kubectl apply -f k8s/db-deployment.yaml
+          kubectl apply -f k8s/db-service.yaml
+          kubectl apply -f k8s/web-deployment.yaml
+          kubectl apply -f k8s/web-service.yaml
       - name: Wait for deployment to be ready
         run: |
           kubectl rollout status deployment/db -n default --timeout=300s
