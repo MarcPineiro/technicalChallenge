@@ -92,8 +92,9 @@ jobs:
           sed "s/replicas: [0-9]*/replicas: ${{ vars.REPLICA_NUMBER }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
           sed "s/MYSQL_DATABASE: \w*/MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/MYSQL_DATABASE_HOST: \w*/MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
-          sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: "${{ vars.MYSQL_DATABASE_PORT }}"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
+          sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: \"${{ vars.MYSQL_DATABASE_PORT }}\"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
+      - run: cat k8s/env-configmap-sed2.yaml
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply --force -f k8s/env-configmap-sed2.yaml
