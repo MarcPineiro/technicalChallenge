@@ -95,6 +95,8 @@ jobs:
           sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: \"${{ vars.MYSQL_DATABASE_PORT }}\"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
       - run: cat k8s/env-configmap-sed2.yaml
+      - run: sudo ls /var/lib
+      - run: sudo ls /var/lib/mysql
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply --force -f k8s/env-configmap-sed2.yaml
@@ -115,6 +117,8 @@ jobs:
         run: kubectl get deployments && kubectl get services
       - name: Describe pods
         run: kubectl describe pods
+      - name: Describe services
+        run: kubectl describe services
       - name: logs pods web
         run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: logs pods db
@@ -124,14 +128,17 @@ jobs:
           minikube service web --url
           echo "------------------opening the service------------------"
           echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
-      - if: ${{ steps.version.outputs.HTTP_CODE_POST == 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
-        name: Error code from post
-        run: exit 1
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service example --url
           echo "------------------opening the service------------------"echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
-      - if: ${{ steps.version.outputs.HTTP_CODE_GET == 000 || fromJSON(steps.version.outputs.HTTP_CODE_GET) >= 400 }}
+      - run: minikube delete --all --purge
+      - if: ${{ steps.version.outputs.HTTP_CODE_POST != 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
+        name: Error code from post
+        run: exit 1
+      - if: ${{ steps.version.outputs.HTTP_CODE_GET != 000 || fromJSON(steps.version.outputs.HTTP_CODE_GET) >= 400 }}
         name: Error code from get
         run: exit 1
+
+      
       
