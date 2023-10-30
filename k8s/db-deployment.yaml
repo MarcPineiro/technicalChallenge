@@ -22,24 +22,38 @@ spec:
             - mysqld
             - --character-set-server=utf8mb4
             - --collation-server=utf8mb4_unicode_ci
-          envFrom:
-          - secretRef:
-              name: env-secret
-          - configMapRef:
-              name: env-config
           image: mysql:8.0
-          livenessProbe:
-            exec:
-              command:
-                - mysqladmin
-                - ping
-                - -h
-                - localhost
-                - -uroot
-                - -ppass
-            failureThreshold: 20
-            periodSeconds: 5
-            timeoutSeconds: 5
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: env-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-secret
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: MYSQL_DATABASE_PORT
+            - name: MYSQL_DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: MYSQL_DATABASE_HOST
           name: db
           ports:
             - containerPort: 3306
