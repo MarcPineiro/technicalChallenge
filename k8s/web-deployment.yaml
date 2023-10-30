@@ -18,12 +18,38 @@ spec:
       containers:
       - name: web
         image: imagename
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: MYSQL_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: MYSQL_PASSWORD
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: env-config
+                key: MYSQL_DATABASE
+          - name: MYSQL_DATABASE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: env-config
+                key: MYSQL_DATABASE_PORT
+          - name: MYSQL_DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: env-config
+                key: MYSQL_DATABASE_HOST
         imagePullPolicy: Never
-        envFrom:
-        - secretRef:
-            name: env-secret
-        - configMapRef:
-            name: env-config
         ports:
           - containerPort: 80
         resources: {}
