@@ -89,7 +89,7 @@ jobs:
         run: eval $(minikube -p minikube docker-env) && docker load < ./dockerimage.tar 
       - name: Set env values
         run: |
-          sed "'s/replicas: [0-9]*/replicas: ${{ vars.REPLICA_NUMBER }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
+          sed "s/replicas: [0-9]*/replicas: ${{ vars.REPLICA_NUMBER }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
           sed "s/MYSQL_DATABASE: \w*/${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/MYSQL_DATABASE_HOST: \w*/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/MYSQL_DATABASE_PORT: \w*/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
