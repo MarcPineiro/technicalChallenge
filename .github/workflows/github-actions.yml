@@ -91,7 +91,7 @@ jobs:
           sed "s/MYSQL_DATABASE: \w*/MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/MYSQL_DATABASE_HOST: \w*/MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: \"${{ vars.MYSQL_DATABASE_PORT }}\"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
-          echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
+          echo "${{ vars.TEST_SECRETS }}" > k8s/env-secrets.yaml
       - run: cat k8s/env-secrets.yaml
       - run: cat k8s/env-configmap-sed2.yaml
       - name: Apply Kubernetes manifests
@@ -128,7 +128,8 @@ jobs:
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service web --url
-          echo "------------------opening the service------------------"echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
+          echo "------------------opening the service------------------"
+          echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
       - name: logs pods web
         run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: logs pods db
