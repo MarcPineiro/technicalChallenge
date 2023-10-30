@@ -42,8 +42,8 @@ jobs:
         run: sudo apt-get install -y mysql-server 
       - name: Update setup mysql sql file
         run: |
-          sed -i 's/mysqldb/${{ vars.MYSQL_DATABASE }}/g' setup_mysql.sql > setup_mysql.sql
-          sed -i 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/g' setup_mysql.sql > setup_mysql.sql
+          sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql.sql > setup_mysql.sql
+          sed 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/' setup_mysql.sql > setup_mysql.sql
       - name: Get version
         id: vars
         run: echo "version=$(cat setup_mysql.sql)" >> $GITHUB_OUTPUT
@@ -88,13 +88,13 @@ jobs:
         run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
       - name: Set env values
         run: |
-          sed -i 's/dbname/${{ vars.MYSQL_DATABASE }}/g' env-configmap.yaml > env-configmap.yaml
-          sed -i 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/g' env-configmap.yaml > env-configmap.yaml
-          sed -i 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/g' env-configmap.yaml > env-configmap.yaml
-          sed -i 's/password/${{ secrets.MYSQL_PASSWORD }}/g' env-secrets.yaml > env-secrets.yaml
-          sed -i 's/host/${{ secrets.MYSQL_ROOT_HOST }}/g' env-secrets.yaml > env-secrets.yaml
-          sed -i 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/g' env-secrets.yaml > env-secrets.yaml
-          sed -i 's/user/${{ secrets.MYSQL_USER }}/g' env-secrets.yaml > env-secrets.yaml
+          sed 's/dbname/${{ vars.MYSQL_DATABASE }}/' env-configmap.yaml > env-configmap.yaml
+          sed 's/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/' env-configmap.yaml > env-configmap.yaml
+          sed 's/3306/${{ vars.MYSQL_DATABASE_PORT }}/' env-configmap.yaml > env-configmap.yaml
+          sed 's/password/${{ secrets.MYSQL_PASSWORD }}/' env-secrets.yaml > env-secrets.yaml
+          sed 's/host/${{ secrets.MYSQL_ROOT_HOST }}/' env-secrets.yaml > env-secrets.yaml
+          sed 's/root_password/${{ secrets.MYSQL_ROOT_PASSWORD }}/' env-secrets.yaml > env-secrets.yaml
+          sed 's/user/${{ secrets.MYSQL_USER }}/' env-secrets.yaml > env-secrets.yaml
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/env-configmap.yaml
