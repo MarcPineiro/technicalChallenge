@@ -115,6 +115,12 @@ jobs:
         run: minikube service web --url
       - name: Verify Deployment
         run: kubectl get deployments && kubectl get services
+      - name: Describe pods
+        run: kubectl describe pods
+      - name: logs pods web
+        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
+      - name: logs pods db
+        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("db")).metadata.name')
       - name: Contact django app to test post endpoint is working
         run: |
           minikube service web --url
