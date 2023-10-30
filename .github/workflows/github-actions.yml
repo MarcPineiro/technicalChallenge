@@ -92,7 +92,7 @@ jobs:
           sed "s/replicas: [0-9]*/replicas: ${{ vars.REPLICA_NUMBER }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
           sed "s/MYSQL_DATABASE: \w*/MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/MYSQL_DATABASE_HOST: \w*/MYSQL_DATABASE_HOST: ${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
-          sed "s/MYSQL_DATABASE_PORT: \w*/MYSQL_DATABASE_PORT: "${{ vars.MYSQL_DATABASE_PORT }}"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
+          sed "s/MYSQL_DATABASE_PORT: \"[0-9]*\"/MYSQL_DATABASE_PORT: "${{ vars.MYSQL_DATABASE_PORT }}"/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
       - run: cat k8s/web-deployment-sed.yaml
       - name: test pods
@@ -127,7 +127,7 @@ jobs:
           echo "------------------opening the service------------------"
           echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
       - if: ${{ steps.version.outputs.HTTP_CODE_POST == 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
-        name: Error code from get
+        name: Error code from post
         run: exit 1
       - name: Contact django app to test get endpoint is working
         run: |
