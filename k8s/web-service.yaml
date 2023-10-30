@@ -6,6 +6,8 @@ metadata:
     io.service: web
   name: web
 spec:
+  externalIPs:
+    - 192.168.49.3
   ports:
     - name: "8080"
       port: 8080
