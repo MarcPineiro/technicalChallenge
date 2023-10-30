@@ -101,7 +101,7 @@ jobs:
           kubectl apply --force -f k8s/env-configmap-sed2.yaml
           kubectl apply --force -f k8s/env-secrets.yaml
           kubectl apply --force -f k8s/djangonetwork-networkpolicy.yaml
-          kubectl apply --force -f k8s/db-deployment.yaml
+          kubectl apply --force -f k8s/db-deployment-test.yaml
           kubectl apply --force -f k8s/db-service.yaml
           kubectl apply --force -f k8s/web-deployment-sed.yaml
           kubectl apply --force -f k8s/web-service.yaml
