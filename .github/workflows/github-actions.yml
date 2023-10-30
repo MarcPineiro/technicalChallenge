@@ -119,14 +119,14 @@ jobs:
         run: |
           minikube service example --url
           echo "------------------opening the service------------------"
-          echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service example --url)/api/users")" >> $GITHUB_OUTPUT
+          echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
       - if: ${{ steps.version.outputs.HTTP_CODE_POST == 000 || fromJSON(steps.version.outputs.HTTP_CODE_POST) >= 400 }}
         name: Error code from get
         run: exit 1
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service example --url
-          echo "------------------opening the service------------------"echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service example --url)/api/users/1")" >> $GITHUB_OUTPUT
+          echo "------------------opening the service------------------"echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
       - if: ${{ steps.version.outputs.HTTP_CODE_GET == 000 || fromJSON(steps.version.outputs.HTTP_CODE_GET) >= 400 }}
         name: Error code from get
         run: exit 1
