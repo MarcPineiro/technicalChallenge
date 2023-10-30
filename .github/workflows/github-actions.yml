@@ -71,7 +71,9 @@ jobs:
       
     
   deployment:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    container:
+      image: ubuntu:latest
     needs: dockerize
     steps:
       - name: Checkout code
