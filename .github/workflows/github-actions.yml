@@ -63,26 +63,16 @@ jobs:
       - name: Build image
         run: docker build . -t imagename
       - name: Save image
-        run: docker save -o ./imagename-latest.tar imagename:latest
+        run: docker save -o ./dockerimage.tar imagename
       - uses: actions/upload-artifact@v2
         with:
-          name: imagename-latest
-          path: ./imagename-latest.tar 
-        
-  testdownload:
-    needs: dockerize
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v2
-        with:
-          name: imagename-latest
-          path: .
-      - name: testing
-        run: docker load < ./imagename-latest.tar 
+          name: dockerimage
+          path: ./dockerimage.tar 
+      
     
   deployment:
     runs-on: ubuntu-20.04
+    needs: dockerize
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -91,24 +81,30 @@ jobs:
           cache: false
       - name: Start Minikube
         run: minikube start
+      - uses: actions/download-artifact@v2
+        with:
+          name: dockerimage
+          path: .
       - name: Load Docker image into Minikube
-        run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
+        run: eval $(minikube -p minikube docker-env) && docker load < ./dockerimage.tar 
       - name: Set env values
         run: |
           sed "s/dbname/${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/3306/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
+      - name: test pods
+        run: kubectl get endpoints
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/env-configmap-sed2.yaml
-          kubectl apply -f k8s/env-secrets.yaml
-          kubectl apply -f k8s/db-claim0-persistentvolumeclaim.yaml
-          kubectl apply -f k8s/djangonetwork-networkpolicy.yaml
-          kubectl apply -f k8s/db-deployment.yaml
-          kubectl apply -f k8s/db-service.yaml
-          kubectl apply -f k8s/web-deployment.yaml
-          kubectl apply -f k8s/web-service.yaml
+          kubectl apply --force -f k8s/env-configmap-sed2.yaml
+          kubectl apply --force -f k8s/env-secrets.yaml
+          kubectl apply --force -f k8s/db-claim0-persistentvolumeclaim.yaml
+          kubectl apply --force -f k8s/djangonetwork-networkpolicy.yaml
+          kubectl apply --force -f k8s/db-deployment.yaml
+          kubectl apply --force -f k8s/db-service.yaml
+          kubectl apply --force -f k8s/web-deployment.yaml
+          kubectl apply --force -f k8s/web-service.yaml
       - name: Wait for deployment to be ready
         run: |
           kubectl rollout status deployment/db -n default --timeout=300s
