@@ -63,6 +63,17 @@ jobs:
         uses: actions/checkout@v3
       - name: Build image
         run: docker build . -t imagename
+      - name: Build and export
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: myimage:latest
+          outputs: type=docker,dest=/tmp/myimage.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: myimage
+          path: /tmp/myimage.tar
       - name: Show image build
         run: |
           echo -n "verifying images:"
@@ -78,6 +89,15 @@ jobs:
           cache: false
       - name: Start Minikube
         run: minikube start
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: myimage
+          path: /tmp
+      - name: Load Docker image into Minikube
+        run: eval $(minikube -p minikube docker-env) && docker load --input /tmp/myimage.tar
+      - name: test docker image load
+        run: eval $(minikube -p minikube docker-env) && docker images
       - name: Load Docker image into Minikube
         run: eval $(minikube -p minikube docker-env) && docker build . -t imagename
       - name: Set env values
@@ -85,7 +105,7 @@ jobs:
           sed "s/dbname/${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
           sed "s/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
           sed "s/3306/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
-          echo ${{ secrets.MINIKUBE_SECRETS }} > k8s/env-secrets.yaml
+          echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/env-configmap-sed2.yaml
