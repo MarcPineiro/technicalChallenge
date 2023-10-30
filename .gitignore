@@ -3,3 +3,4 @@ venv/**
 *.ign
 *.ignore
 my-db/
+.vscode/
