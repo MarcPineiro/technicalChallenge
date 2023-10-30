@@ -15,6 +15,7 @@ spec:
         io.network/djangonetwork: "true"
         io.service: web
     spec:
+      restartPolicy: Always
       containers:
       - name: web
         image: imagename
