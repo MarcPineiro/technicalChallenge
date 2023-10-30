@@ -44,11 +44,6 @@ jobs:
         run: |
           sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql.sql > setup_mysql2.sql
           sed 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/' setup_mysql2.sql > setup_mysql.sql
-      - name: Get version
-        id: vars
-        run: echo "version=$(cat setup_mysql.sql)" >> $GITHUB_OUTPUT
-      - name: Test output
-        run: echo ${{ steps.vars.outputs.version }}
       - name: Configure mysql database
         run: mysql -h 127.0.0.1 -uroot -p${{ vars.TEST_MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
       - name: Install dependencies
