@@ -104,8 +104,6 @@ jobs:
       - name: Wait for db to be ready
         run: kubectl rollout status deployment/db -n default --timeout=300s
       - run: sleep 20
-      - name: logs pods db
-        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("db")).metadata.name')
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply --force -f k8s/web-deployment-sed.yaml
@@ -114,22 +112,19 @@ jobs:
         run: kubectl rollout status deployment/web -n default --timeout=300s
       - name: Get api url
         run: minikube service web --url
-      - name: Verify Deployment
-        run: kubectl get deployments && kubectl get services
-      - name: logs pods web
-        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
-      - name: logs pods db
-        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("db")).metadata.name')
       - name: Contact django app to test post endpoint is working
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"
-          echo "HTTP_CODE_POST=$(curl -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
+          echo "HTTP_CODE_POST=$(curl -s -o /dev/null -w "%{http_code}" -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
+      - run: echo "${{ steps.version.outputs.HTTP_CODE_POST }}"
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"
-          echo "HTTP_CODE_GET=$(curl --write-out '%{http_code}' --silent "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
+          echo "HTTP_CODE_GET=$(curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
+          curl --write-out '%{http_code}' "$(minikube service web --url)/api/users/1"
+      - run: echo "${{ steps.version.outputs.HTTP_CODE_GET }}"
       - name: logs pods web
         run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: logs pods db
