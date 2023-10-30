@@ -42,7 +42,7 @@ jobs:
         run: sudo apt-get install -y mysql-server 
       - name: Update setup mysql sql file
         run: |
-          sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql.sql > setup_mysql2.sql
+          sed 's/mysqldb/${{ vars.MYSQL_DATABASE }}/' setup_mysql_testing.sql > setup_mysql2.sql
           sed 's/mysql-user/${{ vars.TEST_MYSQL_USER }}/' setup_mysql2.sql > setup_mysql.sql
       - name: Configure mysql database
         run: mysql -h 127.0.0.1 -uroot -p${{ vars.TEST_MYSQL_ROOT_PASSWORD }} mysqldb < setup_mysql.sql
@@ -89,10 +89,10 @@ jobs:
         run: eval $(minikube -p minikube docker-env) && docker load < ./dockerimage.tar 
       - name: Set env values
         run: |
-          sed "s/replicas: 1/replicas: ${{ vars.DOCKER_IMAGE_NAME }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
-          sed "s/dbname/${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
-          sed "s/dbhost/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
-          sed "s/3306/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
+          sed "'s/replicas: [0-9]*/replicas: ${{ vars.REPLICA_NUMBER }}/" k8s/web-deployment.yaml > k8s/web-deployment-sed.yaml
+          sed "s/MYSQL_DATABASE: \w*/${{ vars.MYSQL_DATABASE }}/" k8s/env-configmap.yaml > k8s/env-configmap-sed.yaml
+          sed "s/MYSQL_DATABASE_HOST: \w*/${{ vars.MYSQL_DATABASE_HOST }}/" k8s/env-configmap-sed.yaml > k8s/env-configmap-sed1.yaml
+          sed "s/MYSQL_DATABASE_PORT: \w*/${{ vars.MYSQL_DATABASE_PORT }}/" k8s/env-configmap-sed1.yaml > k8s/env-configmap-sed2.yaml
           echo "${{ secrets.MINIKUBE_SECRETS }}" > k8s/env-secrets.yaml
       - name: test pods
         run: kubectl get endpoints
