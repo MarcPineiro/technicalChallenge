@@ -110,6 +110,8 @@ jobs:
           kubectl apply --force -f k8s/web-service.yaml
       - name: Wait for web to be ready
         run: kubectl rollout status deployment/web -n default --timeout=300s
+      - run: sleep 20
+      - run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service web --url
