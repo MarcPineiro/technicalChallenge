@@ -114,17 +114,12 @@ jobs:
       - name: Contact django app to test post endpoint is working
         id: post
         run: echo "::set-output name=HTTP_CODE_POST::$(curl -s -o /dev/null -w "%{http_code}" -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")"
-      - run: echo "${{ steps.post.outputs.HTTP_CODE_POST }}"
       - name: Contact django app to test get endpoint is working
         id: get
         run: echo "::set-output name=HTTP_CODE_GET::$(curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1")"
-      - run: echo "${{ steps.get.outputs.HTTP_CODE_GET  }}"
-      - if: ${{ steps.post.outputs.HTTP_CODE_POST != 000 || fromJSON(steps.post.outputs.HTTP_CODE_POST) >= 400 }}
+      - if: ${{ steps.post.outputs.HTTP_CODE_POST == 000 || fromJSON(steps.post.outputs.HTTP_CODE_POST) >= 400 }}
         name: Error enpoint post
         run: exit 1
-      - if: ${{ steps.get.outputs.HTTP_CODE_GET != 000 || fromJSON(steps.get.outputs.HTTP_CODE_GET) >= 400 }}
+      - if: ${{ steps.get.outputs.HTTP_CODE_GET == 000 || fromJSON(steps.get.outputs.HTTP_CODE_GET) >= 400 }}
         name: Error enpoint post
         run: exit 1
-
-      
-      
