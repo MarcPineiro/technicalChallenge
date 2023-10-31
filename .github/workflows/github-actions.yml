@@ -114,7 +114,7 @@ jobs:
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"
-          curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1"
+          curl "$(minikube service web --url)/api/users/1"
       - name: Contact django app to test get endpoint is working
         run: echo "HTTP_CODE_GET=$(curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
       - run: echo "${{ steps.version.outputs.HTTP_CODE_GET }}"
