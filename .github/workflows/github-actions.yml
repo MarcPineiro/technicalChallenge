@@ -116,15 +116,18 @@ jobs:
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"
-          echo "HTTP_CODE_POST=$(curl -s -o /dev/null -w "%{http_code}" -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
-      - run: echo "${{ steps.version.outputs.HTTP_CODE_POST }}"
+          curl -s -o /dev/null -w "%{http_code}" -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users"
       - name: Contact django app to test get endpoint is working
         run: |
           minikube service web --url
           echo "------------------opening the service------------------"
-          echo "HTTP_CODE_GET=$(curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
-          curl --write-out '%{http_code}' "$(minikube service web --url)/api/users/1"
+          curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1"
+      - name: Contact django app to test post endpoint is working
+        run: echo "HTTP_CODE_POST=$(curl -s -o /dev/null -w "%{http_code}" -d "first_name=John&last_name=Doe&password=securepassword&email=use1@example.com" -X POST "$(minikube service web --url)/api/users")" >> $GITHUB_OUTPUT
+      - name: Contact django app to test get endpoint is working
+        run: echo "HTTP_CODE_GET=$(curl -s -o /dev/null -w "%{http_code}" "$(minikube service web --url)/api/users/1")" >> $GITHUB_OUTPUT
       - run: echo "${{ steps.version.outputs.HTTP_CODE_GET }}"
+      - run: echo "${{ steps.version.outputs.HTTP_CODE_POST }}"
       - name: logs pods web
         run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: logs pods db
