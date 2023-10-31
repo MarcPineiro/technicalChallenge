@@ -112,6 +112,8 @@ jobs:
         run: kubectl rollout status deployment/web -n default --timeout=300s
       - name: Get api url
         run: minikube service web --url
+      - name: logs pods web
+        run: kubectl logs $(kubectl get pods -o json | jq -r '.items[] | select(.metadata.name | test("web")).metadata.name')
       - name: Contact django app to test post endpoint is working
         run: |
           minikube service web --url
