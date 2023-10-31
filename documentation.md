@@ -48,7 +48,7 @@ To run the API server locally, follow these steps:
    Make sure the mysql.service is active:
 
    ```
-   sudo systemctl mysql.service status
+   sudo systemctl status mysql.service
    ```
 
 5. Configure database:
@@ -227,7 +227,13 @@ To access your API server through the NodePort, follow these steps:
    $> kubectl delete service web
    ```
 
-1. **Get the Server url**:
+   The order to delete the resources should be:
+
+   1. Deployments
+   2. Services
+   3. pvc (persistant volume claim)
+   4. networkpolicy
+   5. secrets and configmaps
 
 ## Kubernetes for Deployment
 
